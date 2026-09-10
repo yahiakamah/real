@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════ ROOT MENU ═══════════════ -->
+    <menuitem id="facility_management_root_menu"
+              name="Facility Management"
+              web_icon="pomo_facility_management,static/description/icon.png"
+              sequence="16"
+              groups="pomo_facility_management.group_facility_user"/>
+
+    <!-- ═══════════════ OPERATIONS ═══════════════ -->
+    <menuitem id="facility_management_menu_operations"
+              name="Operations"
+              parent="facility_management_root_menu"
+              sequence="10"/>
+
+    <menuitem id="facility_management_menu_work_order"
+              name="Work Orders"
+              parent="facility_management_menu_operations"
+              action="facility_management_action_work_order"
+              sequence="10"/>
+
+    <menuitem id="facility_management_menu_tenant_request"
+              name="Tenant Requests"
+              parent="facility_management_menu_operations"
+              action="facility_management_action_tenant_request"
+              sequence="20"/>
+
+    <menuitem id="facility_management_menu_inspection"
+              name="Inspections"
+              parent="facility_management_menu_operations"
+              action="facility_management_action_inspection"
+              groups="pomo_facility_management.group_facility_technician"
+              sequence="30"/>
+
+    <!-- ═══════════════ ASSETS ═══════════════ -->
+    <menuitem id="facility_management_menu_assets"
+              name="Assets"
+              parent="facility_management_root_menu"
+              sequence="20"/>
+
+    <menuitem id="facility_management_menu_asset_registry"
+              name="Asset Registry"
+              parent="facility_management_menu_assets"
+              action="facility_management_action_asset"
+              sequence="10"/>
+
+    <!-- ═══════════════ CONTRACTS ═══════════════ -->
+    <menuitem id="facility_management_menu_contracts"
+              name="Contracts"
+              parent="facility_management_root_menu"
+              groups="pomo_facility_management.group_facility_manager"
+              sequence="30"/>
+
+    <menuitem id="facility_management_menu_vendor_contract"
+              name="Vendor Contracts"
+              parent="facility_management_menu_contracts"
+              action="facility_management_action_vendor_contract"
+              sequence="10"/>
+
+    <!-- ═══════════════ REPORTING ═══════════════ -->
+    <menuitem id="facility_management_menu_reporting"
+              name="Reporting"
+              parent="facility_management_root_menu"
+              groups="pomo_facility_management.group_facility_manager"
+              sequence="40"/>
+
+    <menuitem id="facility_management_menu_work_order_analysis"
+              name="Work Order Analysis"
+              parent="facility_management_menu_reporting"
+              action="facility_management_action_work_order"
+              sequence="10"/>
+
+    <!-- ═══════════════ CONFIGURATION ═══════════════ -->
+    <menuitem id="facility_management_menu_configuration"
+              name="Configuration"
+              parent="facility_management_root_menu"
+              groups="pomo_facility_management.group_facility_manager"
+              sequence="90"/>
+
+    <menuitem id="facility_management_menu_service_category"
+              name="Service Categories"
+              parent="facility_management_menu_configuration"
+              action="facility_management_action_service_category"
+              sequence="10"/>
+
+    <menuitem id="facility_management_menu_checklist_template"
+              name="Checklist Templates"
+              parent="facility_management_menu_configuration"
+              action="facility_management_action_checklist_template"
+              sequence="20"/>
+
+    <menuitem id="facility_management_menu_maintenance_plan"
+              name="Maintenance Plans"
+              parent="facility_management_menu_configuration"
+              action="facility_management_action_maintenance_plan"
+              groups="pomo_facility_management.group_facility_technician"
+              sequence="30"/>
+
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="facility_category_plumbing" model="facility.service.category">
+        <field name="name">Plumbing</field>
+        <field name="code">PLB</field>
+        <field name="sequence">10</field>
+        <field name="response_time_hours">24</field>
+    </record>
+
+    <record id="facility_category_electrical" model="facility.service.category">
+        <field name="name">Electrical</field>
+        <field name="code">ELE</field>
+        <field name="sequence">20</field>
+        <field name="response_time_hours">24</field>
+    </record>
+
+    <record id="facility_category_hvac" model="facility.service.category">
+        <field name="name">HVAC / Air Conditioning</field>
+        <field name="code">HVAC</field>
+        <field name="sequence">30</field>
+        <field name="response_time_hours">48</field>
+    </record>
+
+    <record id="facility_category_elevator" model="facility.service.category">
+        <field name="name">Elevator</field>
+        <field name="code">ELV</field>
+        <field name="sequence">40</field>
+        <field name="response_time_hours">4</field>
+        <field name="default_priority">2</field>
+    </record>
+
+    <record id="facility_category_cleaning" model="facility.service.category">
+        <field name="name">Cleaning</field>
+        <field name="code">CLN</field>
+        <field name="sequence">50</field>
+        <field name="response_time_hours">72</field>
+    </record>
+
+    <record id="facility_category_security" model="facility.service.category">
+        <field name="name">Security</field>
+        <field name="code">SEC</field>
+        <field name="sequence">60</field>
+        <field name="response_time_hours">4</field>
+        <field name="default_priority">2</field>
+    </record>
+
+    <record id="facility_category_landscaping" model="facility.service.category">
+        <field name="name">Landscaping</field>
+        <field name="code">LND</field>
+        <field name="sequence">70</field>
+        <field name="response_time_hours">120</field>
+    </record>
+
+    <record id="facility_category_general" model="facility.service.category">
+        <field name="name">General Maintenance</field>
+        <field name="code">GEN</field>
+        <field name="sequence">80</field>
+        <field name="response_time_hours">48</field>
+    </record>
+
+</odoo>

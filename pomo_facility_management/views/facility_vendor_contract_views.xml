@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════ LIST VIEW ═══════════════════════ -->
+    <record id="facility_vendor_contract_view_list" model="ir.ui.view">
+        <field name="name">facility.vendor.contract.list</field>
+        <field name="model">facility.vendor.contract</field>
+        <field name="arch" type="xml">
+            <list string="Vendor Contracts"
+                  decoration-danger="is_expired"
+                  decoration-muted="state == 'cancelled'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="project_id" optional="show"/>
+                <field name="building_id" optional="show"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="days_remaining"/>
+                <field name="contract_value"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-danger="state == 'expired'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════ FORM VIEW ═══════════════════════ -->
+    <record id="facility_vendor_contract_view_form" model="ir.ui.view">
+        <field name="name">facility.vendor.contract.form</field>
+        <field name="model">facility.vendor.contract</field>
+        <field name="arch" type="xml">
+            <form string="Vendor Contract">
+                <header>
+                    <button name="action_activate" type="object"
+                            string="Activate" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_expire" type="object"
+                            string="Mark Expired"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" type="object"
+                            string="Cancel"
+                            invisible="state in ('expired','cancelled')"/>
+                    <button name="action_reset_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,expired"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Expired"
+                            bg_color="text-bg-danger"
+                            invisible="not is_expired"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_work_orders"
+                                class="oe_stat_button" icon="fa-wrench"
+                                invisible="not id">
+                            <field name="work_order_count" widget="statinfo"
+                                   string="Work Orders"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Contract Name"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Vendor Information">
+                            <field name="vendor_id"/>
+                            <field name="vendor_phone"/>
+                            <field name="vendor_email"/>
+                        </group>
+                        <group string="Scope">
+                            <field name="project_id"/>
+                            <field name="building_id"/>
+                            <field name="category_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Contract Terms">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="days_remaining"/>
+                            <field name="payment_terms"/>
+                        </group>
+                        <group string="Financial">
+                            <field name="contract_value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scope of Work">
+                            <field name="scope_of_work"
+                                   placeholder="Detail the scope of work covered by this contract..."/>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"
+                                   placeholder="Additional notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════ SEARCH VIEW ═══════════════════════ -->
+    <record id="facility_vendor_contract_view_search" model="ir.ui.view">
+        <field name="name">facility.vendor.contract.search</field>
+        <field name="model">facility.vendor.contract</field>
+        <field name="arch" type="xml">
+            <search string="Vendor Contracts">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="vendor_id"/>
+                <field name="project_id"/>
+                <field name="building_id"/>
+                <filter string="Active" name="active_contracts"
+                        domain="[('state', '=', 'active')]"/>
+                <filter string="Expired" name="expired_contracts"
+                        domain="[('state', '=', 'expired')]"/>
+                <filter string="Expiring Soon (30 days)" name="expiring_soon"
+                        domain="[('state', '=', 'active'), ('days_remaining', '&lt;=', 30)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Vendor" name="group_vendor"
+                            context="{'group_by': 'vendor_id'}"/>
+                    <filter string="Project" name="group_project"
+                            context="{'group_by': 'project_id'}"/>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════ ACTION ═══════════════════════ -->
+    <record id="facility_management_action_vendor_contract" model="ir.actions.act_window">
+        <field name="name">Vendor Contracts</field>
+        <field name="res_model">facility.vendor.contract</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active_contracts': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first vendor maintenance contract
+            </p>
+            <p>
+                Manage contracts with maintenance vendors and service providers,
+                track expiry dates and scope of work per project and building.
+            </p>
+        </field>
+    </record>
+
+</odoo>

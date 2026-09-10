@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="facility_checklist_template_view_list" model="ir.ui.view">
+        <field name="name">facility.checklist.template.list</field>
+        <field name="model">facility.checklist.template</field>
+        <field name="arch" type="xml">
+            <list string="Checklist Templates">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="inspection_type"/>
+                <field name="item_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="facility_checklist_template_view_form" model="ir.ui.view">
+        <field name="name">facility.checklist.template.form</field>
+        <field name="model">facility.checklist.template</field>
+        <field name="arch" type="xml">
+            <form string="Checklist Template">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Template Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="inspection_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="item_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist Items">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="facility_management_action_checklist_template" model="ir.actions.act_window">
+        <field name="name">Checklist Templates</field>
+        <field name="res_model">facility.checklist.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first checklist template</p>
+            <p>Define reusable inspection checklists that can be applied to property inspections.</p>
+        </field>
+    </record>
+
+</odoo>

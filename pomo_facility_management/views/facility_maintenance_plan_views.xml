@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="facility_maintenance_plan_view_list" model="ir.ui.view">
+        <field name="name">facility.maintenance.plan.list</field>
+        <field name="model">facility.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <list string="Maintenance Plans">
+                <field name="name"/>
+                <field name="asset_id"/>
+                <field name="building_id"/>
+                <field name="category_id"/>
+                <field name="frequency_type"/>
+                <field name="interval"/>
+                <field name="next_date"/>
+                <field name="last_generated_date"/>
+                <field name="technician_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="facility_maintenance_plan_view_form" model="ir.ui.view">
+        <field name="name">facility.maintenance.plan.form</field>
+        <field name="model">facility.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <form string="Maintenance Plan">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_work_orders"
+                                class="oe_stat_button" icon="fa-wrench" invisible="not id">
+                            <field name="work_order_count" widget="statinfo" string="Work Orders"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Plan Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asset">
+                            <field name="asset_id"/>
+                            <field name="building_id" readonly="1"/>
+                            <field name="category_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Schedule">
+                            <field name="frequency_type"/>
+                            <field name="interval"/>
+                            <field name="next_date"/>
+                            <field name="last_generated_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Work Order Defaults">
+                            <field name="technician_id"/>
+                            <field name="priority"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" nolabel="1" placeholder="Description used on the generated work orders..."/>
+                    </group>
+                    <button name="action_generate_work_order" type="object"
+                            string="Generate Work Order Now" class="btn-secondary"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="facility_maintenance_plan_view_search" model="ir.ui.view">
+        <field name="name">facility.maintenance.plan.search</field>
+        <field name="model">facility.maintenance.plan</field>
+        <field name="arch" type="xml">
+            <search string="Maintenance Plans">
+                <field name="name"/>
+                <field name="asset_id"/>
+                <field name="building_id"/>
+                <field name="category_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Building" name="group_building" context="{'group_by': 'building_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="facility_management_action_maintenance_plan" model="ir.actions.act_window">
+        <field name="name">Maintenance Plans</field>
+        <field name="res_model">facility.maintenance.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first preventive maintenance plan
+            </p>
+            <p>
+                Recurring plans automatically generate work orders on their due date
+                (checked daily by a scheduled action).
+            </p>
+        </field>
+    </record>
+
+</odoo>
