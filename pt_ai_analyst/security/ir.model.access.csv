@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_conversation_user,ai.conversation.user,model_ai_conversation,group_ai_user,1,1,1,1
+access_ai_message_user,ai.message.user,model_ai_message,group_ai_user,1,1,1,1
+access_ai_suggested_question_user,ai.suggested.question.user,model_ai_suggested_question,group_ai_user,1,0,0,0
+access_ai_suggested_question_admin,ai.suggested.question.admin,model_ai_suggested_question,group_ai_admin,1,1,1,1
+access_ai_provider_user,ai.provider.user,model_ai_provider,group_ai_user,1,0,0,0
+access_ai_provider_admin,ai.provider.admin,model_ai_provider,group_ai_admin,1,1,1,1
+access_ai_semantic_model_user,ai.semantic.model.user,model_ai_semantic_model,group_ai_user,1,0,0,0
+access_ai_semantic_model_admin,ai.semantic.model.admin,model_ai_semantic_model,group_ai_admin,1,1,1,1
+access_ai_semantic_field_user,ai.semantic.field.user,model_ai_semantic_field,group_ai_user,1,0,0,0
+access_ai_semantic_field_admin,ai.semantic.field.admin,model_ai_semantic_field,group_ai_admin,1,1,1,1
+access_ai_audit_manager,ai.audit.log.manager,model_ai_audit_log,group_ai_manager,1,0,0,0
+access_ai_audit_admin,ai.audit.log.admin,model_ai_audit_log,group_ai_admin,1,1,0,1
+access_ai_avatar_config_user,ai.avatar.config.user,model_ai_avatar_config,group_ai_user,1,0,0,0
+access_ai_avatar_config_admin,ai.avatar.config.admin,model_ai_avatar_config,group_ai_admin,1,1,1,1

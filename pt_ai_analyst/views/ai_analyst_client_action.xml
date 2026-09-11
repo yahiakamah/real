@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ai_analyst_app" model="ir.actions.client">
+        <field name="name">AI Analyst</field>
+        <field name="tag">pt_ai_analyst.assistant</field>
+    </record>
+</odoo>

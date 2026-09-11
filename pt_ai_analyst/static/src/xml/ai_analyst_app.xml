@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="pt_ai_analyst.AiAnalystApp">
+        <div class="o_ai_analyst d-flex">
+
+            <!-- LEFT: conversation history -->
+            <aside class="o_ai_sidebar d-flex flex-column">
+                <button class="btn btn-primary m-2" t-on-click="newConversation">
+                    <i class="fa fa-plus me-1"/> New conversation
+                </button>
+                <div class="px-2 pb-2">
+                    <input type="text" class="form-control form-control-sm"
+                           placeholder="Search…" t-model="state.search"/>
+                </div>
+                <div class="o_ai_conv_list flex-grow-1 overflow-auto">
+                    <t t-foreach="filteredConversations" t-as="conv" t-key="conv.id">
+                        <div class="o_ai_conv_item p-2 d-flex align-items-center"
+                             t-att-class="{ 'active': conv.id === state.activeConversationId }"
+                             t-on-click="() => this.selectConversation(conv)">
+                            <t t-if="state.editingId === conv.id">
+                                <input type="text" class="form-control form-control-sm"
+                                       t-model="state.editingName" t-on-click.stop=""
+                                       t-on-blur="() => this.commitEdit(conv)"
+                                       t-on-keydown="(ev) => this.onEditKeydown(ev, conv)"/>
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-comment-o me-2"/>
+                                <span class="o_ai_conv_name flex-grow-1" t-esc="conv.name"/>
+                                <i class="fa fa-pencil o_ai_conv_action"
+                                   t-on-click.stop="() => this.startEdit(conv)"/>
+                                <i class="fa fa-trash-o o_ai_conv_action"
+                                   t-on-click.stop="() => this.deleteConversation(conv)"/>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </aside>
+
+            <!-- CENTER: chat -->
+            <main class="o_ai_main d-flex flex-column flex-grow-1">
+                <div class="o_ai_thread flex-grow-1 overflow-auto px-4" t-ref="thread">
+                    <t t-if="!state.messages.length">
+                        <div class="o_ai_welcome text-center text-muted py-4">
+                            <h4>Hi <t t-esc="state.userName"/> 👋</h4>
+                            <p>Ask me anything about your data — by text or voice.
+                               I only use information you're allowed to see.</p>
+                        </div>
+                    </t>
+
+                    <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+                        <div class="o_ai_msg d-flex mb-1"
+                             t-att-class="msg.role === 'user' ? 'justify-content-end' : 'justify-content-start'">
+                            <div class="o_ai_bubble"
+                                 t-att-class="{
+                                    'o_ai_bubble_user': msg.role === 'user',
+                                    'o_ai_bubble_ai': msg.role === 'assistant',
+                                    'o_ai_bubble_error': msg.is_error,
+                                 }">
+                                <t t-esc="msg.content"/>
+                            </div>
+                        </div>
+                        <t t-if="msg.visuals and msg.visuals.length">
+                            <div class="o_ai_visuals mb-1"
+                                 t-att-class="{ 'o_ai_dashboard': msg.visuals.length > 1 }">
+                                <t t-foreach="msg.visuals" t-as="v" t-key="v_index">
+                                    <div class="o_ai_dash_cell"
+                                         t-att-class="{ 'o_ai_dash_wide': v.type === 'kpi' || v.type === 'table' }">
+                                        <VisualBlock payload="v"/>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="o_ai_export mb-3" t-if="msg.id">
+                                <span class="o_ai_export_lbl">Export:</span>
+                                <a class="o_ai_export_btn" t-att-href="exportUrl(msg.id, 'csv')" target="_blank">
+                                    <i class="fa fa-file-text-o me-1"/>CSV</a>
+                                <a class="o_ai_export_btn" t-att-href="exportUrl(msg.id, 'xlsx')" target="_blank">
+                                    <i class="fa fa-file-excel-o me-1"/>Excel</a>
+                                <a class="o_ai_export_btn" t-att-href="exportUrl(msg.id, 'pdf')" target="_blank">
+                                    <i class="fa fa-file-pdf-o me-1"/>PDF</a>
+                            </div>
+                        </t>
+                    </t>
+
+                    <t t-if="state.loading">
+                        <div class="o_ai_msg d-flex justify-content-start mb-3">
+                            <div class="o_ai_bubble o_ai_bubble_ai o_ai_typing">
+                                <span/><span/><span/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <div class="o_ai_suggestions px-4 pt-2"
+                     t-if="!state.messages.length and state.suggestions.length">
+                    <t t-foreach="state.suggestions" t-as="sq" t-key="sq.id">
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2"
+                                t-on-click="() => this.selectSuggestion(sq.name)">
+                            <i t-att-class="'fa me-1 ' + sq.icon"/>
+                            <t t-esc="sq.name"/>
+                        </button>
+                    </t>
+                </div>
+
+                <div class="o_ai_input d-flex align-items-end p-3">
+                    <button class="btn o_ai_mic me-2" t-if="sttSupported"
+                            t-att-class="{ 'o_ai_mic_on': state.listening }"
+                            t-on-click="micClick"
+                            t-att-title="state.listening ? 'Stop' : 'Speak'">
+                        <i class="fa fa-microphone"/>
+                    </button>
+                    <textarea class="form-control me-2" rows="1"
+                              placeholder="Ask about your data…"
+                              t-model="state.input" t-on-keydown="onKeydown"/>
+                    <button class="btn btn-primary" t-att-disabled="state.loading"
+                            t-on-click="ask">
+                        <i class="fa fa-paper-plane"/>
+                    </button>
+                </div>
+            </main>
+
+            <!-- RIGHT: big avatar panel -->
+            <aside class="o_ai_avatar_panel d-flex flex-column align-items-center">
+                <div class="o_ai_avatar_big" t-att-class="'o_ai_avatar_' + state.status">
+                    <t t-if="state.avatarMode === 'heygen'">
+                        <video class="o_ai_video_big" t-ref="avatarVideo"
+                               autoplay="autoplay" playsinline="playsinline"/>
+                    </t>
+                    <t t-else="">
+                        <svg class="o_ai_svg_avatar" viewBox="0 0 240 240"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="aiBg" cx="50%" cy="38%" r="70%">
+                                    <stop offset="0%" stop-color="#eef3ff"/>
+                                    <stop offset="100%" stop-color="#d3e0ff"/>
+                                </radialGradient>
+                                <linearGradient id="aiShirt" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#5a7ff0"/>
+                                    <stop offset="100%" stop-color="#6a5ae0"/>
+                                </linearGradient>
+                                <clipPath id="aiClip"><circle cx="120" cy="120" r="116"/></clipPath>
+                            </defs>
+
+                            <circle cx="120" cy="120" r="116" fill="url(#aiBg)"/>
+                            <circle class="o_ai_ring" cx="120" cy="120" r="112" fill="none"/>
+
+                            <g clip-path="url(#aiClip)">
+                                <path class="o_ai_shoulders"
+                                      d="M44 244 Q44 176 120 176 Q196 176 196 244 Z"
+                                      fill="url(#aiShirt)"/>
+                                <path d="M104 182 L120 198 L136 182 Z" fill="#ffffff" opacity="0.25"/>
+                                <rect class="o_ai_neck" x="106" y="150" width="28" height="32" rx="12"/>
+                                <ellipse class="o_ai_ear" cx="74" cy="112" rx="7" ry="11"/>
+                                <ellipse class="o_ai_ear" cx="166" cy="112" rx="7" ry="11"/>
+                                <ellipse class="o_ai_head" cx="120" cy="108" rx="46" ry="52"/>
+                                <path class="o_ai_hair"
+                                      d="M73 108 Q68 48 120 48 Q172 48 167 108 Q158 76 120 76 Q82 76 73 108 Z"/>
+                                <rect class="o_ai_brow" x="90" y="92" width="22" height="4" rx="2"/>
+                                <rect class="o_ai_brow" x="128" y="92" width="22" height="4" rx="2"/>
+                                <g class="o_ai_eyes">
+                                    <ellipse class="o_ai_eye_white" cx="100" cy="106" rx="9" ry="7"/>
+                                    <ellipse class="o_ai_eye_white" cx="140" cy="106" rx="9" ry="7"/>
+                                    <circle class="o_ai_pupil" cx="100" cy="107" r="3.6"/>
+                                    <circle class="o_ai_pupil" cx="140" cy="107" r="3.6"/>
+                                </g>
+                                <ellipse class="o_ai_mouth" cx="120" cy="134" rx="12" ry="3.4"/>
+                                <!-- headset: band + earpiece + mic boom -->
+                                <path class="o_ai_headset" d="M72 112 Q120 40 168 112"
+                                      fill="none" stroke-width="7" stroke-linecap="round"/>
+                                <circle class="o_ai_earpiece" cx="72" cy="116" r="11"/>
+                                <circle class="o_ai_earpiece_in" cx="72" cy="116" r="5"/>
+                                <path class="o_ai_boom" d="M72 126 Q66 156 106 152"
+                                      fill="none" stroke-width="4" stroke-linecap="round"/>
+                                <circle class="o_ai_boom_tip" cx="106" cy="152" r="4"/>
+                            </g>
+                        </svg>
+                    </t>
+                </div>
+
+                <div class="o_ai_avatar_name mt-2">AI Analyst</div>
+                <div class="o_ai_avatar_status2" t-esc="avatarStatusLabel"/>
+
+                <div class="o_ai_voice_controls mt-3">
+                    <button class="o_ai_chip" t-if="sttSupported"
+                            t-att-class="{ 'active': state.handsFree }"
+                            t-on-click="toggleHandsFree"
+                            title="Hands-free: keep listening automatically">
+                        <i class="fa fa-headphones me-1"/><span>Hands-free</span>
+                    </button>
+                    <button class="o_ai_chip"
+                            t-if="canSpeak"
+                            t-att-class="{ 'active': state.voiceEnabled }"
+                            t-on-click="toggleVoice"
+                            t-att-title="state.voiceEnabled ? 'Voice replies on' : 'Voice replies off'">
+                        <i t-att-class="state.voiceEnabled ? 'fa fa-volume-up' : 'fa fa-volume-off'"/>
+                        <span class="ms-1">Voice</span>
+                    </button>
+                    <button class="o_ai_chip" t-if="sttSupported" t-on-click="toggleInputLang"
+                            title="Speech input language">
+                        <i class="fa fa-language me-1"/>
+                        <span t-esc="state.inputLang === 'ar-EG' ? 'ع' : 'EN'"/>
+                    </button>
+                </div>
+            </aside>
+
+        </div>
+    </t>
+
+</templates>

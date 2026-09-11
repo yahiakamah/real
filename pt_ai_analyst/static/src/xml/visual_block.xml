@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="pt_ai_analyst.VisualBlock">
+        <div class="o_ai_visual mt-2">
+            <div class="o_ai_visual_title" t-if="payload.title" t-esc="payload.title"/>
+
+            <!-- KPI -->
+            <t t-if="payload.type === 'kpi'">
+                <div class="o_ai_kpi_row">
+                    <t t-foreach="payload.items" t-as="item" t-key="item_index">
+                        <div class="o_ai_kpi_card">
+                            <div class="o_ai_kpi_value" t-esc="fmt(item.value)"/>
+                            <div class="o_ai_kpi_label" t-esc="item.label"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE -->
+            <t t-if="payload.type === 'table'">
+                <table class="o_ai_table table table-sm">
+                    <thead>
+                        <tr>
+                            <t t-foreach="payload.columns" t-as="col" t-key="col_index">
+                                <th t-esc="col"/>
+                            </t>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="payload.rows" t-as="row" t-key="row_index">
+                            <tr>
+                                <t t-foreach="row" t-as="cell" t-key="cell_index">
+                                    <td t-esc="fmt(cell)"/>
+                                </t>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+
+            <!-- BAR -->
+            <t t-if="payload.type === 'bar'">
+                <div class="o_ai_bars">
+                    <t t-foreach="bars" t-as="bar" t-key="bar_index">
+                        <div class="o_ai_bar_row">
+                            <div class="o_ai_bar_label" t-esc="bar.label"/>
+                            <div class="o_ai_bar_track">
+                                <div class="o_ai_bar_fill"
+                                     t-attf-style="width:{{bar.pct}}%;background:{{bar.color}};"/>
+                            </div>
+                            <div class="o_ai_bar_value" t-esc="fmt(bar.value)"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- LINE -->
+            <t t-if="payload.type === 'line'">
+                <svg class="o_ai_line" t-attf-viewBox="0 0 {{line.W}} {{line.H}}"
+                     preserveAspectRatio="xMidYMid meet">
+                    <line x1="22" t-att-y1="line.baseline" t-att-x2="line.W - 22"
+                          t-att-y2="line.baseline" class="o_ai_line_axis"/>
+                    <polyline t-att-points="line.points" class="o_ai_line_path"/>
+                    <t t-foreach="line.dots" t-as="dot" t-key="dot_index">
+                        <circle t-att-cx="dot.x" t-att-cy="dot.y" r="3" class="o_ai_line_dot"/>
+                    </t>
+                </svg>
+            </t>
+
+            <!-- PIE -->
+            <t t-if="payload.type === 'pie'">
+                <div class="o_ai_pie_wrap">
+                    <div class="o_ai_pie" t-attf-style="background:{{pie.background}};"/>
+                    <div class="o_ai_pie_legend">
+                        <t t-foreach="pie.legend" t-as="seg" t-key="seg_index">
+                            <div class="o_ai_pie_leg_item">
+                                <span class="o_ai_pie_dot" t-attf-style="background:{{seg.color}};"/>
+                                <span class="o_ai_pie_leg_label" t-esc="seg.label"/>
+                                <span class="o_ai_pie_leg_val">
+                                    <t t-esc="fmt(seg.value)"/> (<t t-esc="seg.pct"/>%)
+                                </span>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

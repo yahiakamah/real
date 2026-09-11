@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_ai_message" model="ir.actions.report">
+        <field name="name">AI Analyst Report</field>
+        <field name="model">ai.message</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pt_ai_analyst.report_ai_message</field>
+        <field name="report_file">pt_ai_analyst.report_ai_message</field>
+    </record>
+
+    <template id="report_ai_message">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>AI Analyst Report</h2>
+                        <p class="text-muted">
+                            <span t-field="doc.create_date"/>
+                        </p>
+                        <div style="white-space:pre-wrap;margin-bottom:16px;"
+                             t-esc="doc.content"/>
+
+                        <t t-set="sections" t-value="doc._export_sections()"/>
+                        <t t-foreach="sections" t-as="sec">
+                            <h4 t-esc="sec['title']"/>
+                            <table class="table table-sm o_main_table">
+                                <thead>
+                                    <tr>
+                                        <t t-foreach="sec['columns']" t-as="col">
+                                            <th t-esc="col"/>
+                                        </t>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="sec['rows']" t-as="row">
+                                        <tr>
+                                            <t t-foreach="row" t-as="cell">
+                                                <td t-esc="cell"/>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

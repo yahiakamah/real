@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Skeleton provider: no API key on purpose. The admin sets the key in
+             AI Analyst > Configuration > Providers before first use. -->
+        <record id="ai_provider_default" model="ai.provider">
+            <field name="name">Default Provider</field>
+            <field name="provider_type">gemini</field>
+            <field name="model">gemini-3.6-flash</field>
+            <field name="is_default" eval="True"/>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

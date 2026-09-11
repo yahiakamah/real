@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ai_suggested_question_list" model="ir.ui.view">
+        <field name="name">ai.suggested.question.list</field>
+        <field name="model">ai.suggested.question</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="group_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ai_suggested_question" model="ir.actions.act_window">
+        <field name="name">Suggested Questions</field>
+        <field name="res_model">ai.suggested.question</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

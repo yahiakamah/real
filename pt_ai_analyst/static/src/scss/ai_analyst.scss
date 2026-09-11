@@ -1,0 +1,515 @@
+.o_ai_analyst {
+    height: 100%;
+    background: #f6f7f9;
+
+    .o_ai_sidebar {
+        width: 260px;
+        min-width: 260px;
+        border-right: 1px solid #e0e2e6;
+        background: #fff;
+
+        .o_ai_conv_item {
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 2px 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &:hover { background: #f0f1f3; }
+            &.active { background: #e7eefc; font-weight: 500; }
+        }
+    }
+
+    .o_ai_main { min-width: 0; }
+
+    /* ---------------- Avatar ---------------- */
+    .o_ai_avatar_zone { border-bottom: 1px solid #eceef1; background: #fff; }
+
+    .o_ai_avatar {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 104px;
+        height: 112px;
+
+        .o_ai_avatar_face {
+            position: relative;
+            z-index: 2;
+            line-height: 1;
+        }
+
+        .o_ai_avatar_pulse {
+            position: absolute;
+            inset: 8px 8px 20px 8px;
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0;
+        }
+    }
+
+    /* State: idle */
+    .o_ai_avatar_idle .o_ai_avatar_face { color: #6b7280; }
+
+    /* State: thinking */
+    .o_ai_avatar_thinking {
+        .o_ai_avatar_face { color: #4a72d0; animation: aiBob 1.4s ease-in-out infinite; }
+        .o_ai_avatar_pulse {
+            opacity: 1;
+            background: radial-gradient(circle, rgba(74,114,208,.25), transparent 70%);
+            animation: aiPulse 1.4s ease-out infinite;
+        }
+    }
+
+    /* State: analyzing */
+    .o_ai_avatar_analyzing {
+        .o_ai_avatar_face { color: #7a4ad0; }
+        .o_ai_avatar_pulse {
+            opacity: 1;
+            background: radial-gradient(circle, rgba(122,74,208,.28), transparent 70%);
+            animation: aiPulse 1s ease-out infinite;
+        }
+    }
+
+    /* State: speaking */
+    .o_ai_avatar_speaking {
+        .o_ai_avatar_face { color: #2e9e6b; animation: aiSpeak .5s ease-in-out infinite; }
+    }
+
+    /* State: error */
+    .o_ai_avatar_error .o_ai_avatar_face { color: #d0433a; }
+
+    /* ---------------- Chat ---------------- */
+    .o_ai_thread { padding-top: 12px; }
+
+    .o_ai_bubble {
+        max-width: 72%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.5;
+        box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .o_ai_bubble_user { background: #4a72d0; color: #fff; border-bottom-right-radius: 4px; }
+    .o_ai_bubble_ai   { background: #fff; color: #1f2937; border-bottom-left-radius: 4px; }
+    .o_ai_bubble_error { background: #fdecea; color: #9b2c22; }
+
+    .o_ai_typing span {
+        display: inline-block;
+        width: 7px; height: 7px; margin: 0 2px;
+        background: #9aa3b2; border-radius: 50%;
+        animation: aiTyping 1.2s infinite ease-in-out;
+    }
+    .o_ai_typing span:nth-child(2) { animation-delay: .2s; }
+    .o_ai_typing span:nth-child(3) { animation-delay: .4s; }
+
+    .o_ai_input {
+        border-top: 1px solid #eceef1;
+        background: #fff;
+        textarea { resize: none; max-height: 140px; }
+    }
+}
+
+@keyframes aiPulse {
+    0%   { transform: scale(.8); opacity: .8; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes aiBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+}
+@keyframes aiSpeak {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
+}
+@keyframes aiTyping {
+    0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+    30%           { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ---------------- Visual analytics blocks ---------------- */
+.o_ai_analyst {
+    .o_ai_visuals {
+        align-self: flex-start;
+        max-width: 82%;
+        width: 100%;
+    }
+
+    .o_ai_visual {
+        background: #fff;
+        border: 1px solid #e6e8ec;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    }
+    .o_ai_visual_title {
+        font-weight: 600;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+
+    /* KPI */
+    .o_ai_kpi_row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .o_ai_kpi_card {
+        flex: 1 1 120px;
+        background: #f7f9fc;
+        border: 1px solid #eceef2;
+        border-radius: 10px;
+        padding: 10px 12px;
+        text-align: center;
+    }
+    .o_ai_kpi_value { font-size: 22px; font-weight: 700; color: #4a72d0; line-height: 1.1; }
+    .o_ai_kpi_label { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+    /* Table */
+    .o_ai_table {
+        margin: 0;
+        font-size: 13px;
+        th { color: #6b7280; font-weight: 600; }
+        td:last-child, th:last-child { text-align: right; }
+    }
+
+    /* Bar (CSS) */
+    .o_ai_bars { display: flex; flex-direction: column; gap: 8px; }
+    .o_ai_bar_row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .o_ai_bar_label { flex: 0 0 34%; color: #374151; white-space: nowrap;
+                      overflow: hidden; text-overflow: ellipsis; }
+    .o_ai_bar_track { flex: 1 1 auto; background: #eef1f5; border-radius: 6px; height: 16px; }
+    .o_ai_bar_fill { height: 100%; border-radius: 6px; min-width: 2px; transition: width .4s ease; }
+    .o_ai_bar_value { flex: 0 0 auto; color: #111827; font-weight: 600; min-width: 42px; text-align: right; }
+
+    /* Line (SVG) */
+    .o_ai_line { width: 100%; height: auto; overflow: visible; }
+    .o_ai_line_axis { stroke: #e0e2e6; stroke-width: 1; }
+    .o_ai_line_path { fill: none; stroke: #4a72d0; stroke-width: 2; }
+    .o_ai_line_dot { fill: #4a72d0; }
+
+    /* Pie */
+    .o_ai_pie_wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .o_ai_pie { width: 120px; height: 120px; border-radius: 50%; flex: 0 0 auto; }
+    .o_ai_pie_legend { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+    .o_ai_pie_leg_item { display: flex; align-items: center; gap: 6px; }
+    .o_ai_pie_dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+    .o_ai_pie_leg_label { color: #374151; }
+    .o_ai_pie_leg_val { color: #6b7280; margin-left: auto; padding-left: 10px; }
+}
+
+/* ---------------- Export toolbar ---------------- */
+.o_ai_analyst {
+    .o_ai_export {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+    }
+    .o_ai_export_lbl { color: #9aa3b2; }
+    .o_ai_export_btn {
+        color: #4a72d0;
+        text-decoration: none;
+        border: 1px solid #dbe2f0;
+        border-radius: 6px;
+        padding: 2px 8px;
+        background: #fff;
+        &:hover { background: #eef2fb; }
+    }
+}
+
+/* ---------------- Voice controls, mic & conversation actions ---------------- */
+.o_ai_analyst {
+    /* State: listening */
+    .o_ai_avatar_listening {
+        .o_ai_avatar_face { color: #d08a2e; }
+        .o_ai_avatar_pulse {
+            opacity: 1;
+            background: radial-gradient(circle, rgba(208,138,46,.30), transparent 70%);
+            animation: aiPulse 1.1s ease-out infinite;
+        }
+    }
+
+    .o_ai_voice_controls { display: flex; gap: 6px; justify-content: center; }
+    .o_ai_chip {
+        border: 1px solid #dbe2f0;
+        background: #fff;
+        color: #6b7280;
+        border-radius: 14px;
+        padding: 2px 10px;
+        font-size: 12px;
+        line-height: 1.4;
+        cursor: pointer;
+        &:hover { background: #f3f6fc; }
+        &.active { background: #e7eefc; color: #4a72d0; border-color: #c3d3f4; }
+    }
+
+    .o_ai_mic {
+        border: 1px solid #dbe2f0;
+        background: #fff;
+        color: #4a72d0;
+        border-radius: 50%;
+        width: 40px; height: 40px;
+        flex: 0 0 40px;
+        &:hover { background: #eef2fb; }
+        &.o_ai_mic_on {
+            background: #d0433a; color: #fff; border-color: #d0433a;
+            animation: aiMicPulse 1.2s ease-out infinite;
+        }
+    }
+
+    .o_ai_conv_item {
+        .o_ai_conv_action {
+            opacity: 0;
+            color: #9aa3b2;
+            padding: 2px 4px;
+            &:hover { color: #4a72d0; }
+        }
+        &:hover .o_ai_conv_action { opacity: 1; }
+        .o_ai_conv_name {
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+    }
+}
+
+@keyframes aiMicPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(208,67,58,.5); }
+    100% { box-shadow: 0 0 0 10px rgba(208,67,58,0); }
+}
+
+/* ---------------- Dashboard grid (multiple visuals) ---------------- */
+.o_ai_analyst {
+    .o_ai_visuals.o_ai_dashboard {
+        max-width: 92%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        .o_ai_visual { margin-bottom: 0; height: 100%; }
+        .o_ai_dash_wide { grid-column: 1 / -1; }
+    }
+    /* single-visual cell stays inline, no grid effects */
+    .o_ai_visuals:not(.o_ai_dashboard) .o_ai_dash_cell { display: contents; }
+}
+
+@media (max-width: 900px) {
+    .o_ai_analyst .o_ai_visuals.o_ai_dashboard {
+        grid-template-columns: 1fr;
+        .o_ai_dash_wide { grid-column: 1 / -1; }
+    }
+}
+
+/* ---------------- Animated SVG avatar + HeyGen video ---------------- */
+.o_ai_analyst {
+    .o_ai_svg_avatar { width: 104px; height: 112px; display: block; }
+
+    .o_ai_shoulders { fill: #4a72d0; }
+    .o_ai_neck { fill: #e6b892; }
+    .o_ai_head { fill: #f2c9a6; }
+    .o_ai_hair { fill: #3a3a4a; }
+    .o_ai_brow { fill: #6d5636; }
+    .o_ai_eye_white { fill: #ffffff; }
+    .o_ai_pupil { fill: #333a45; transition: all .2s ease; }
+    .o_ai_mouth { fill: #b5556a; transform-box: fill-box; transform-origin: center; }
+
+    /* eyes blink in every state */
+    .o_ai_eyes { transform-box: fill-box; transform-origin: center;
+                 animation: aiBlink 5.2s infinite; }
+
+    /* HeyGen video */
+    .o_ai_video {
+        width: 104px; height: 104px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #10131a;
+        z-index: 2; position: relative;
+    }
+
+    /* State tints / motion for the SVG avatar */
+    .o_ai_avatar_thinking {
+        .o_ai_pupil { transform: translateY(-1px); }
+        .o_ai_avatar_pulse {
+            opacity: 1;
+            background: radial-gradient(circle, rgba(74,114,208,.28), transparent 70%);
+            animation: aiPulse 1.4s ease-out infinite;
+        }
+    }
+    .o_ai_avatar_analyzing .o_ai_avatar_pulse {
+        opacity: 1;
+        background: radial-gradient(circle, rgba(122,74,208,.30), transparent 70%);
+        animation: aiPulse 1s ease-out infinite;
+    }
+    .o_ai_avatar_listening .o_ai_avatar_pulse {
+        opacity: 1;
+        background: radial-gradient(circle, rgba(208,138,46,.30), transparent 70%);
+        animation: aiPulse 1.1s ease-out infinite;
+    }
+    /* speaking: lip-sync the mouth */
+    .o_ai_avatar_speaking .o_ai_mouth { animation: aiTalk .26s infinite ease-in-out; }
+    .o_ai_avatar_error .o_ai_head { fill: #e8b0a6; }
+    .o_ai_avatar_error .o_ai_mouth { fill: #a23b32; }
+}
+
+@keyframes aiBlink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95%           { transform: scaleY(0.12); }
+}
+@keyframes aiTalk {
+    0%, 100% { transform: scaleY(0.45) scaleX(1); }
+    25%      { transform: scaleY(2.6) scaleX(0.92); }
+    50%      { transform: scaleY(1.1) scaleX(1.02); }
+    75%      { transform: scaleY(2.1) scaleX(0.95); }
+}
+
+/* ---------------- Animated SVG avatar + HeyGen video ---------------- */
+.o_ai_analyst {
+    .o_ai_avatar { width: 104px; height: 112px; }
+
+    .o_ai_svg_avatar { width: 104px; height: 112px; display: block; }
+    .o_ai_video {
+        width: 104px; height: 104px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #0b1020;
+        border: 2px solid #e0e2e6;
+    }
+
+    /* palette */
+    .o_ai_shoulders { fill: #4a72d0; }
+    .o_ai_neck      { fill: #e6b892; }
+    .o_ai_head      { fill: #f2c9a6; }
+    .o_ai_hair      { fill: #3a3a4a; }
+    .o_ai_brow      { fill: #6b5a4a; }
+    .o_ai_eye_white { fill: #ffffff; }
+    .o_ai_pupil     { fill: #33323a; }
+    .o_ai_mouth     { fill: #b5556a; }
+
+    /* eyes blink in every state */
+    .o_ai_eyes {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: aiBlink 5.2s infinite;
+    }
+    /* gentle idle head bob via the whole svg */
+    .o_ai_svg_avatar {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+    }
+    .o_ai_avatar_idle .o_ai_svg_avatar { animation: aiBreathe 4s ease-in-out infinite; }
+
+    /* lip-sync while speaking */
+    .o_ai_mouth { transform-box: fill-box; transform-origin: center; }
+    .o_ai_avatar_speaking .o_ai_mouth { animation: aiTalk 0.26s infinite; }
+
+    /* thinking: eyes glance up a touch */
+    .o_ai_avatar_thinking .o_ai_pupil { transform: translateY(-1.5px); transition: transform .3s; }
+
+    /* error: flush the face */
+    .o_ai_avatar_error .o_ai_head { fill: #f0b3ab; }
+}
+
+@keyframes aiBlink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    94%           { transform: scaleY(0.1); }
+}
+@keyframes aiBreathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-1.5px) scale(1.008); }
+}
+@keyframes aiTalk {
+    0%, 100% { transform: scaleY(0.5); }
+    25%      { transform: scaleY(2.4) scaleX(1.05); }
+    50%      { transform: scaleY(1.0); }
+    75%      { transform: scaleY(2.0) scaleX(0.97); }
+}
+
+/* ================= Big side avatar panel (v2) ================= */
+.o_ai_analyst {
+    .o_ai_avatar_panel {
+        width: 320px;
+        min-width: 320px;
+        border-left: 1px solid #e0e2e6;
+        background: linear-gradient(180deg, #f8faff 0%, #eef2fb 100%);
+        padding: 24px 16px;
+    }
+
+    .o_ai_avatar_big {
+        position: relative;
+        width: 248px;
+        height: 248px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .o_ai_avatar_big .o_ai_svg_avatar {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 8px 20px rgba(74, 114, 208, 0.25));
+        transform-box: fill-box;
+        transform-origin: center bottom;
+    }
+    .o_ai_video_big {
+        width: 240px;
+        height: 240px;
+        border-radius: 24px;
+        object-fit: cover;
+        background: #0b1020;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .o_ai_avatar_name {
+        font-weight: 700;
+        font-size: 17px;
+        color: #2b3550;
+    }
+    .o_ai_avatar_status2 {
+        font-size: 13px;
+        color: #6b7280;
+        min-height: 18px;
+    }
+
+    /* palette overrides for the modern face */
+    .o_ai_shoulders   { fill: url(#aiShirt); }
+    .o_ai_neck        { fill: #eab892; }
+    .o_ai_head        { fill: #f6cfa8; }
+    .o_ai_ear         { fill: #f0c39c; }
+    .o_ai_hair        { fill: #33323e; }
+    .o_ai_brow        { fill: #5a4a3a; }
+    .o_ai_eye_white   { fill: #ffffff; }
+    .o_ai_pupil       { fill: #33323a; }
+    .o_ai_mouth       { fill: #b5556a; }
+    .o_ai_headset     { stroke: #2b2f38; }
+    .o_ai_earpiece    { fill: #2b2f38; }
+    .o_ai_earpiece_in { fill: #8a93a6; }
+    .o_ai_boom        { stroke: #2b2f38; }
+    .o_ai_boom_tip    { fill: #2b2f38; }
+    .o_ai_ring        { stroke: transparent; stroke-width: 4; }
+
+    /* status rings on the big avatar */
+    .o_ai_avatar_listening .o_ai_ring {
+        stroke: #d08a2e; animation: aiRing 1.1s ease-out infinite;
+    }
+    .o_ai_avatar_thinking .o_ai_ring {
+        stroke: #4a72d0; animation: aiRing 1.4s ease-out infinite;
+    }
+    .o_ai_avatar_analyzing .o_ai_ring {
+        stroke: #7a4ad0; animation: aiRing 1.0s ease-out infinite;
+    }
+    .o_ai_avatar_speaking .o_ai_ring {
+        stroke: #2e9e6b; animation: aiRing 0.9s ease-out infinite;
+    }
+    .o_ai_avatar_error .o_ai_head { fill: #f2b6ad; }
+
+    .o_ai_voice_controls { flex-wrap: wrap; justify-content: center; }
+}
+
+@keyframes aiRing {
+    0%   { opacity: 0.9; transform: scale(0.98); transform-box: fill-box; transform-origin: center; }
+    100% { opacity: 0;   transform: scale(1.04); transform-box: fill-box; transform-origin: center; }
+}
+
+@media (max-width: 1200px) {
+    .o_ai_analyst .o_ai_avatar_panel { width: 260px; min-width: 260px; }
+    .o_ai_analyst .o_ai_avatar_big { width: 208px; height: 208px; }
+}
